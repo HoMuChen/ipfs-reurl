@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>Ipfs reurl app</title>
+    <style>
+      html, body {
+        margin: 0px;
+        background-color: #f4f6f8;
+      }
+    </style>
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <script src="https://unpkg.com/ipfs/dist/index.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://unpkg.com/element-ui/lib/index.js"></script>
+  </head>
+  <body>
+    <div id="app">
+      <el-menu
+        :default-active="mode"
+        class="el-menu-demo"
+        mode="horizontal"
+        @select="handleSelect"
+        background-color="#545c64"
+        text-color="#fff"
+        active-text-color="#ffd04b"
+      >
+        <el-menu-item index="url" style="left: 16">Url</el-menu-item>
+        <el-menu-item index="image">File</el-menu-item>
+      </el-menu>
+
+      <el-row :gutter="16">
+        <el-col style="text-align: center">
+          <h2>Hello from IPFS!</h2>
+          <h3>ID: {{ ipfs.id }}</h3>
+          <h3>Number of peers: {{ ipfs.peers }}/8</h3>
+        </el-col>
+      </el-row>
+      <el-row type="flex" justify="center">
+        <el-col span="6">
+          <el-progress :show-text="false" :percentage="peersPercentage"></el-progress></h3>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="16" v-if="isShowUrl" type="flex" justify="center" style="padding-top: 16px">
+        <el-col :span="8">
+          <el-input v-model="url" placeholder="Please enter url here... Start with http(s)://" @keyup.enter.native="handleAddUrlToIpfs">
+            <el-button type="primary" slot="append" v-on:click="handleAddUrlToIpfs">Go!</el-button>
+          </el-input>
+        </el-col>
+      </el-row>
+      <el-row :gutter="16" v-if="isShowImage" type="flex" justify="center" style="padding-top: 16px">
+        <el-col :span="8">
+          <input type="file" v-on:change="handleFiles"></input>
+        </el-col>
+        <el-col :span="2">
+          <el-button type="primary" v-on:click="addFileToIpfs">Upload</el-button>
+        </el-col>
+      </el-row>
+
+      <el-row :gutter="16" v-if="isDisplayingHash" type="flex" justify="center">
+        <el-col :span="20" style="text-align: center; padding-top: 32px;">
+          <h3><a>{{ reurl }}</a></h3>
+          <el-tooltip content="Copy url to clipboard" placement="bottom">
+            <el-button type="success" icon="el-icon-share" circle v-on:click="copyToClipboard"></el-button>
+          </el-tooltop>
+        </el-col>
+      </el-row>
+
+    </div>
+    <script src="app.js">
+    </script>
+  </body>
+</html>
