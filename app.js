@@ -59,6 +59,7 @@ const app = new Vue({
       if(!this.isIpfsReady()) {
         return;
       }
+
       if(!isURL(this.url)) {
         this.$message({
           message: 'Url is invalid...',
@@ -67,7 +68,7 @@ const app = new Vue({
         return;
       }
 
-      this.ipfs.node.files.add(this.ipfs.node.types.Buffer.from(this.urlScript))
+      this.ipfs.node.add(Ipfs.Buffer.from(this.urlScript))
         .then(res => {
           this.hash = res[0].hash;
           this.setDisplayingHash(true);
@@ -95,8 +96,8 @@ const app = new Vue({
       }
       const reader = new FileReader();
       reader.onload = e => {
-        const content =  this.ipfs.node.types.Buffer.from( e.srcElement.result );
-        this.ipfs.node.files.add(content)
+        const content =  Ipfs.Buffer.from( e.srcElement.result );
+        this.ipfs.node.add(content)
           .then(res => {
             this.hash = res[0].hash;
             this.setDisplayingHash(true);
@@ -133,7 +134,18 @@ const app = new Vue({
     },
   },
   created: function() {
-    this.ipfs.node = new Ipfs();
+    const options = {
+      EXPERIMENTAL: {
+        pubsub: true
+      },
+      //repo: 'ipfs-' + Math.random(),
+      config: {
+        Addresses: {
+          Swarm: ['/dns4/ws-star.discovery.libp2p.io/tcp/443/wss/p2p-websocket-star']
+        }
+      }
+    }
+    this.ipfs.node = new Ipfs(options);
     this.ipfs.node.on('ready', () => {
       this.ipfs.node.id().then(data => this.ipfs.id = data.id);
       setInterval(this.updateIpfsStatus, this.ipfs.updateInterval)
